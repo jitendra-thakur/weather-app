@@ -8,21 +8,44 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    - name: Run Git commands
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16' # Use appropriate Node.js version for your project
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build
+
+    - name: Deploy to GitHub Pages
       run: |
-        git config --global user.email "your email"
-        git config --global user.name "your github username"
-        # Install depedencies
-        npm i
-        # build
-        npm run build
+        git config --global user.email "your-email@example.com"
+        git config --global user.name "your-github-username"
         echo 'Deploying to gh-pages...'
-        git add dist -f
-        git commit -m 'Deploy' 
-        git push origin `git subtree split --prefix dist main`:gh-pages --force
-        echo 'Done'
+        
+        # Initialize gh-pages branch, if not exists
+        git checkout --orphan gh-pages
+        git reset --hard
+        git clean -fd
+        
+        # Copy the contents of the dist folder to the root of the gh-pages branch
+        cp -r dist/* .
+
+        # Add all the files
+        git add -A
+        git commit -m 'Deploy to GitHub Pages'
+        git push --force origin gh-pages
+
+        echo 'Deployment done!'
       env:
-        github-token: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
