@@ -8,7 +8,7 @@ weather-app/
 |-- src/
 |   |-- components/
 |   |   |-- Search/
-|   |   |   |-- Seach.vue
+|   |   |   |-- Search.vue
 |   |   |-- Spinner/
 |   |   |   |-- Spinner.vue
 |   |   |-- Weather/
